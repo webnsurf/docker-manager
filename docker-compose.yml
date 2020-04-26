@@ -1,0 +1,26 @@
+version: "3.5"
+
+services:
+  docker-manager:
+    image: portainer/portainer
+    restart: always
+    container_name: docker-manager
+    ports:
+      - 9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.docker-manager:/data
+    labels:
+      traefik.enable: true
+      traefik.http.routers.docker-manager-redirect.rule: Host(\`docker.webnsurf.com\`)
+      traefik.http.routers.docker-manager-redirect.entrypoints: web
+      traefik.http.routers.docker-manager-redirect.middlewares: https-redirect@file
+
+      traefik.http.routers.docker-manager.rule: Host(\`docker.webnsurf.com\`)
+      traefik.http.routers.docker-manager.entrypoints: websecure
+      traefik.http.routers.docker-manager.tls: true
+
+networks:
+  default:
+    external:
+      name: webnsurf_network
