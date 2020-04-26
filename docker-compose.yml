@@ -12,11 +12,11 @@ services:
       - ~/.docker-manager:/data
     labels:
       traefik.enable: true
-      traefik.http.routers.docker-manager-redirect.rule: Host(\`docker.webnsurf.com\`)
+      traefik.http.routers.docker-manager-redirect.rule: Host(`docker.webnsurf.com`)
       traefik.http.routers.docker-manager-redirect.entrypoints: web
       traefik.http.routers.docker-manager-redirect.middlewares: https-redirect@file
 
-      traefik.http.routers.docker-manager.rule: Host(\`docker.webnsurf.com\`)
+      traefik.http.routers.docker-manager.rule: Host(`docker.webnsurf.com`)
       traefik.http.routers.docker-manager.entrypoints: websecure
       traefik.http.routers.docker-manager.tls: true
 
