@@ -63,11 +63,20 @@ chmod -v 0400 ca-key.pem key.pem server-key.pem
 chmod -v 0444 ca.pem server-cert.pem cert.pem
 ```
 
+5. Move files needed by docker for TLS connection (if `/etc/docker/certs` directory does not exist create it first)
+```console
+sudo mkdir -p /etc/docker/certs
+
+sudo mv ca.pem server-cert.pem server-key.pem /etc/docker/certs/
+```
+
 ### Enabling Docker API over TLS
 
 1. Create a systemd override file (if `/etc/systemd/system/docker.service.d` directory does not exist create it first)
 
 ```console
+sudo mkdir -p /etc/systemd/system/docker.service.d
+
 sudo touch /etc/systemd/system/docker.service.d/override.conf
 ```
 
@@ -88,10 +97,13 @@ sudo systemctl restart docker
 4. Make sure docker API is running and listening on port 2376 and the port is not blocked by your firewal
 
 ```console
-netstat -tunlp | grep 2376
+sudo lsof -i -P -n | egrep --color -- 'LISTEN|COMMAND';
 ```
 
-5. Make sure port 2376 and is not blocked by your firewal
+5. Make sure there's a line similar to this
+```console
+dockerd 3340        root    3u  IPv6 2554483024      0t0  TCP *:2376 (LISTEN)
+```
 
 ### Connecting to the API from a remote machine
 For this you'll need to copy over the client certificate files to the client machine and use them to connect to the docker host machine.
