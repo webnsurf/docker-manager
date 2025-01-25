@@ -1,23 +1,23 @@
-version: "3.5"
-
 services:
   docker-manager:
-    image: portainer/portainer
-    restart: always
+    image: portainer/portainer-ce:2.26.1
     container_name: docker-manager
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     ports:
       - 9000
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ~/.docker-manager:/data
     labels:
       traefik.enable: true
-      traefik.http.routers.docker-manager-redirect.rule: Host(`docker.webnsurf.com`)
-      traefik.http.routers.docker-manager-redirect.entrypoints: web
-      traefik.http.routers.docker-manager-redirect.middlewares: https-redirect@file
+      traefik.http.services.docker-manager.loadbalancer.server.port: 9000
 
       traefik.http.routers.docker-manager.rule: Host(`docker.webnsurf.com`)
       traefik.http.routers.docker-manager.entrypoints: websecure
+      traefik.http.routers.docker-manager.service: docker-manager
       traefik.http.routers.docker-manager.tls: true
 
 networks:
